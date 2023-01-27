@@ -306,15 +306,57 @@ public class UserController {
 	 *
 	 * @return
 	 */
-	@GetMapping("/refresh/{userId}")
-	public Map<String, String> refreshToken(@PathVariable("userId") String userid,
+	/**
+	 * JWT 를 이용한 로그인
+	 */
+	@GetMapping("/home")
+	public String home() {
+		return "home";
+	}
+
+
+	@PostMapping("/join")
+	public String join(@ModelAttribute UserEntity user) {
+
+		user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+		userRepository.save(user);
+
+		return "회원가입완료";
+	}
+
+
+	@GetMapping("/v1/user")
+	public String test1() {
+		return "success";
+	}
+
+
+	@GetMapping("/v1/manager")
+	public String test2() {
+		return "success";
+	}
+
+
+	@GetMapping("/v1/admin")
+	public String test3() {
+		return "success";
+	}
+
+
+	/**
+	 * refresh token 재발급
+	 *
+	 * @return
+	 */
+	@GetMapping("/refresh/{email}")
+	public Map<String, String> refreshToken(@PathVariable("email") String email,
 		@RequestHeader("refreshToken") String refreshToken,
 		HttpServletResponse response) throws JsonProcessingException {
 
 		response.setContentType("application/json");
 		response.setCharacterEncoding("utf-8");
 
-		JwtToken jwtToken = jwtService.validRefreshToken(userid, refreshToken);
+		JwtToken jwtToken = jwtService.validRefreshToken(email, refreshToken);
 		Map<String, String> jsonResponse = jwtService.recreateTokenResponse(jwtToken);
 
 		return jsonResponse;

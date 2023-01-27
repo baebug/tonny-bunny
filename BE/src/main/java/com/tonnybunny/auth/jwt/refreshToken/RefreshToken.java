@@ -16,7 +16,7 @@ public class RefreshToken { // Entity라서 나중에 이동
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "refresh_token_seq")
-	private Long id;
+	private Long seq;
 
 	@Column(name = "refresh_token", length = 500)
 	private String refreshToken;

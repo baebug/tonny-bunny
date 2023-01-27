@@ -4,7 +4,6 @@ package com.tonnybunny.config;
 import com.tonnybunny.auth.jwt.filter.JwtAuthenticationFilter;
 import com.tonnybunny.auth.jwt.filter.JwtAuthorizationFilter;
 import com.tonnybunny.auth.jwt.service.JwtService;
-import com.tonnybunny.common.CommonRepository;
 import com.tonnybunny.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +23,6 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
 	private final CorConfig config;
-	private final CommonRepository commonRepository; // userRepo로 변경 예정
 	private final JwtService jwtService;
 	private final UserRepository userRepository;
 

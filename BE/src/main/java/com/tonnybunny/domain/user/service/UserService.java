@@ -7,6 +7,7 @@ import com.tonnybunny.domain.user.dto.ReportRequestDto;
 import com.tonnybunny.domain.user.dto.UserRequestDto;
 import com.tonnybunny.domain.user.entity.HistoryEntity;
 import com.tonnybunny.domain.user.entity.UserEntity;
+import com.tonnybunny.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,6 +16,9 @@ import java.util.List;
 
 @Service
 public class UserService {
+
+	private UserRepository userRepository;
+
 
 	public UserEntity signup(UserRequestDto userRequestDto) {
 		UserEntity user = userRequestDto.toEntity();
@@ -266,5 +270,7 @@ public class UserService {
 		 */
 		return (HistoryEntity) new Object();
 	}
+
+	// 인증 관련 로직
 
 }
