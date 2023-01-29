@@ -30,7 +30,7 @@ public class SecurityConfig {
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() { // 비로그인 접근 가능한 경로
 		return web -> web.ignoring()
-			.antMatchers("/join", "/", "/home", "/refresh/**");
+			.antMatchers("/join", "/", "/home", "/refresh/**", "/api", "api/refresh/**");
 	}
 
 
@@ -46,15 +46,6 @@ public class SecurityConfig {
 			.httpBasic().disable() // Bearer 방식 사용 -> header에 authentication에 토큰을 넣어 전달하는 방식
 
 			.apply(new MyCustomDsl())
-			.and()
-
-			.authorizeRequests()
-			.antMatchers("/api/v1/user/**")
-			.hasAuthority("USER") // 사실 우리는 이렇게 권한아직안나눠서 필요없긴 함. 나중에 보기
-			.antMatchers("/api/v1/manager/**").hasAuthority("MANAGER")
-			.antMatchers("/api/v1/admin/**").hasAuthority("ADMIN")
-			.anyRequest().permitAll()
-
 			.and()
 			.build();
 

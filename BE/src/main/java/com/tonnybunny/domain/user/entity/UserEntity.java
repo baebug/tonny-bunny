@@ -133,7 +133,9 @@ public class UserEntity extends CommonEntity {
 	private List<YTonnyQuotationEntity> helperYTonnyQuotationList = new ArrayList<>(); // 헬퍼 측 예약 통역 요청 견적서 리스트
 
 	// jwt 관련
-	@OneToOne(fetch = FetchType.LAZY, mappedBy = "user") // refreshToken 과 1대1 매핑
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "refreshToken")
+	// refreshToken 과 1대1 매핑
 	private RefreshToken jwtRefreshToken;
 
 

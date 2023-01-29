@@ -37,8 +37,9 @@ public class JwtService {
 	public JwtToken joinJwtToken(String email) {
 
 		UserEntity user = userRepository.findByEmail(email);
+		System.out.println("joinJwtToken - user : " + user.toString());
 		RefreshToken userRefreshToken = user.getJwtRefreshToken();
-
+		System.out.println("userRefreshToken = " + userRefreshToken);
 		//처음 서비스를 이용하는 사용자(refresh 토큰이 없는 사용자)
 		if (userRefreshToken == null) {
 
@@ -89,9 +90,7 @@ public class JwtService {
 			}
 
 		} catch (Exception e) {
-			/**
-			 * 여기도 accesstoken이 기간 만료인지 , 정상적이지 않은 accesstoken 인지 구분해야하나??!???????????????????????????????????
-			 */
+
 			return null;
 		}
 		return null;
@@ -109,7 +108,7 @@ public class JwtService {
 		//전달받은 refresh 토큰과 DB의 refresh 토큰이 일치하는지 확인
 		RefreshToken findRefreshToken = sameCheckRefreshToken(findUser, refreshToken);
 
-		//refresh 토큰이 만료되지 않았으면 access 토큰이 null 이 아이다.
+		//refresh 토큰이 만료되지 않았으면 access 토큰이 null 이 아니다.
 		String accessToken = jwtProviderService.validRefreshToken(findRefreshToken);
 
 		//refresh 토큰의 유효기간이 남아 access 토큰만 생성
@@ -140,7 +139,7 @@ public class JwtService {
 
 
 	/**
-	 * json response 부분 따로 분리하기!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	 * json response 부분 따로 분리
 	 */
 	//로그인시 응답 json response
 	public Map<String, String> successLoginResponse(JwtToken jwtToken) {

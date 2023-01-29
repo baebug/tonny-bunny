@@ -1,7 +1,6 @@
 package com.tonnybunny.auth.jwt.refreshToken;
 
 
-import com.tonnybunny.domain.user.entity.UserEntity;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,12 +17,8 @@ public class RefreshToken { // Entity라서 나중에 이동
 	@Column(name = "refresh_token_seq")
 	private Long seq;
 
-	@Column(name = "refresh_token", length = 500)
+	@Column(name = "refreshToken", length = 500)
 	private String refreshToken;
-
-	@OneToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_seq")
-	private UserEntity user;
 
 
 	public RefreshToken(String refreshToken) {

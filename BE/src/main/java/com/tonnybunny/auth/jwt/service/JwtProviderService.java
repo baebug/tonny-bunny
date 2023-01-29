@@ -21,13 +21,13 @@ public class JwtProviderService {
 	/**
 	 * accessToken, refreshToken 생성
 	 */
-	public JwtToken createJwtToken(Long id, String email) {
+	public JwtToken createJwtToken(Long seq, String email) {
 
 		//Access token 생성
 		String accessToken = JWT.create()
 			.withSubject(email)
 			.withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.AccessToken_TIME))
-			.withClaim("id", id)
+			.withClaim("seq", seq)
 			.withClaim("email", email)
 			.sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
@@ -35,7 +35,7 @@ public class JwtProviderService {
 		String refreshToken = JWT.create()
 			.withSubject(email)
 			.withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.RefreshToken_TIME))
-			.withClaim("id", id)
+			.withClaim("seq", seq)
 			.withClaim("email", email)
 			.sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
@@ -49,12 +49,12 @@ public class JwtProviderService {
 	/**
 	 * access token 생성
 	 */
-	public String createAccessToken(Long id, String email) {
+	public String createAccessToken(Long seq, String email) {
 
 		String accessToken = JWT.create()
 			.withSubject(email)
 			.withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.AccessToken_TIME))
-			.withClaim("id", id)
+			.withClaim("seq", seq)
 			.withClaim("email", email)
 			.sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
