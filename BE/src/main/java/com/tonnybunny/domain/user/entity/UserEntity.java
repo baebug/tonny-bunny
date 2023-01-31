@@ -9,6 +9,7 @@ import com.tonnybunny.domain.bunny.entity.BunnyNotiHelperEntity;
 import com.tonnybunny.domain.bunny.entity.BunnyQuotationEntity;
 import com.tonnybunny.domain.chat.entity.ChatLogEntity;
 import com.tonnybunny.domain.chat.entity.ChatRoomEntity;
+import com.tonnybunny.domain.jtonny.entity.JTonnyNotiEntity;
 import com.tonnybunny.domain.point.entity.PointLogEntity;
 import com.tonnybunny.domain.review.entity.ReviewEntity;
 import com.tonnybunny.domain.schedule.entity.ScheduleEntity;
@@ -52,6 +53,10 @@ public class UserEntity extends CommonEntity {
 	private List<FollowEntity> followUserList = new ArrayList<>(); // 팔로잉 목록
 	@OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
 	private HelperInfoEntity helperInfo;                            // 헬퍼 정보
+
+	// 즉시 통역
+	@OneToMany(mappedBy = "client")
+	private List<JTonnyNotiEntity> jTonnyNotiList = new ArrayList<>(); // 즉시통역공고리스트
 	// 예약통역
 	@OneToMany(mappedBy = "client")
 	private List<YTonnyNotiEntity> yTonnyNotiList = new ArrayList<>(); // 예약통역공고리스트

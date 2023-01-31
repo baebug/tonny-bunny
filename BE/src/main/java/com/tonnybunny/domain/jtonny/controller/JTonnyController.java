@@ -32,16 +32,22 @@ public class JTonnyController {
 
 	/**
 	 * 즉시 통역 공고 생성
+	 * Client 가 Helper 에게 즉시 통역을 요청
 	 *
 	 * @param jTonnyNotiRequestDto : 즉시 통역 공고 생성 폼
-	 * @return : 생성된 공고 seq
+	 * @return : 성공 여부
 	 */
 	@PostMapping
 	@ApiOperation(value = "즉시 통역 공고 생성")
-	public ResponseEntity<ResultDto<Long>> createJTonnyNoti(@RequestBody JTonnyNotiRequestDto jTonnyNotiRequestDto) {
-
+	//	public ResponseEntity<ResultDto<Long>> createJTonnyNoti(@RequestBody JTonnyNotiRequestDto jTonnyNotiRequestDto) {
+	public ResponseEntity<ResultDto<Boolean>> createJTonnyNoti(@RequestBody JTonnyNotiRequestDto jTonnyNotiRequestDto) {
+		/**
+		 * 해당 언어(jTonnyNotiRequestDto.getEndLangCode())를 구독중인 유저에게
+		 * jTonnyNotiRequestDto 을 전송한다.
+		 */
 		Long jTonnyNotiSeq = jTonnyService.createJTonnyNoti(jTonnyNotiRequestDto);
-		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(jTonnyNotiSeq));
+		// return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(jTonnyNotiSeq));
+		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.ofSuccess());
 	}
 
 
@@ -68,6 +74,8 @@ public class JTonnyController {
 	 * 즉시 통역 공고 목록 조회
 	 *
 	 * @return 즉시 통역 공고 Response Dto List
+	 *
+	 * 삭제예정) 콜 받는 페이지에 진입했을 때, 휘발성 jTonnyNoti 가 쌓인다.
 	 */
 	@GetMapping
 	@ApiOperation(value = "즉시 통역 공고 목록 조회")
