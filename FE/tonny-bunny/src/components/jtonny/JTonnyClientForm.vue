@@ -1,6 +1,6 @@
 <template>
     <div class="d-flex justify-content-center customFormWrap w-100">
-        <form class="customForm" @submit.prevent="submitForm(event)">
+        <form class="customForm">
             <title-text important type="h2" title="어떤 언어통역이 필요하신가요?" />
 
             <div class="d-flex flex-row">
@@ -60,9 +60,26 @@
             <textarea type="textarea" placeholder="내용을 입력해주세요" value="" />
 
             <agree-input @toggle="(e) => (agreeValue = e)" />
+
+            <medium-btn style="width: 100%" text="즉시찾기" color="carrot" @click="clickNextBtn" />
+
             <router-link :to="{ name: 'JTonnyWaitingPage' }">
-                <medium-btn style="width: 100%" text="즉시찾기" color="carrot" />
+                <medium-btn style="width: 100%" text="일단 다음페이지 갑시다.." color="carrot" />
             </router-link>
+
+            <alarm-modal
+                :isOpen="isOpen"
+                title="경고"
+                type="danger"
+                btnText2="확인"
+                btnColor2="carrot"
+                btnFontColor2="white"
+                @clickBtn2="closeModal">
+                <template #content>
+                    찾을 수 없습니다. <br />
+                    잠시 후 다시 이용해주세요.
+                </template>
+            </alarm-modal>
         </form>
     </div>
 </template>
@@ -72,10 +89,11 @@ import MediumBtn from "../common/button/MediumBtn.vue";
 import AgreeInput from "../common/input/AgreeInput.vue";
 import DropdownInput from "../common/input/DropdownInput.vue";
 import TitleText from "../common/TitleText.vue";
+import AlarmModal from "../common/modal/AlarmModal.vue";
 
 export default {
     name: "JTonnyClientForm",
-    components: { TitleText, DropdownInput, MediumBtn, AgreeInput },
+    components: { TitleText, DropdownInput, MediumBtn, AgreeInput, AlarmModal },
     data() {
         return {
             dropdownValue: "",
@@ -87,6 +105,7 @@ export default {
                 notice: "", // 유효성검사 결과 텍스트
             },
             agreeValue: false,
+            isOpen: false,
         };
     },
     methods: {
@@ -99,6 +118,24 @@ export default {
             if (!this[e.target.id].validate.test(this[e.target.id].value)) {
                 this[e.target.id].notice =
                     "최소 8자 이상, 숫자와 문자를 포함한 비밀번호를 입력해주세요.";
+            }
+        },
+
+        //실패 모달
+        openModal() {
+            this.isOpen = true;
+        },
+
+        closeModal() {
+            this.isOpen = false;
+        },
+
+        // 하단 버튼
+        clickNextBtn() {
+            if (this.$store.dispatch("insertJtonny") === "success") {
+                this.$router.push({ name: "JTonnyWaitingPage" });
+            } else {
+                this.openModal();
             }
         },
     },

@@ -8,6 +8,7 @@ import temp from "./state/temp";
 import account from "./state/account";
 import board from "./state/board";
 import tonny from "./state/tonny";
+import jtonny from "./state/jtonny";
 import bunny from "./state/bunny";
 import common from "./state/common";
 
@@ -21,6 +22,7 @@ export default createStore({
         account,
         board,
         tonny,
+        jtonny,
         bunny,
         common,
     },
