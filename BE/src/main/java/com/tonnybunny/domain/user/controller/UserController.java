@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 
@@ -31,7 +32,7 @@ public class UserController {
 
 	@PostMapping("/signup")
 	@ApiOperation(value = "공통 회원가입을 진행합니다.")
-	public ResponseEntity<ResultDto<TokenResponseDto>> signup(@RequestBody UserRequestDto userRequestDto)
+	public ResponseEntity<ResultDto<TokenResponseDto>> signup(@RequestBody @Valid UserRequestDto userRequestDto)
 		throws Exception {
 
 		TokenResponseDto tokenResponseDto = userService.signup(userRequestDto);
@@ -181,10 +182,10 @@ public class UserController {
 
 
 	@GetMapping("/mypage/{userSeq}/follow")
-	@ApiOperation(value = "즐겨찾기 목록을 조회합니다.", notes = "")
+	@ApiOperation(value = "즐겨찾기 목록을 조회합니다.")
 	public ResponseEntity<ResultDto<List<FollowResponseDto>>> getFollowList(@PathVariable(
-		"userSeq") Long userSeq) {
-		List<FollowEntity> followList = userService.getFollowList();
+		"userSeq") Long userSeq) throws Exception {
+		List<FollowEntity> followList = userService.getFollowList(userSeq);
 		List<FollowResponseDto> followResponseDtoList =
 			FollowResponseDto.fromEntityList(followList);
 		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(followResponseDtoList));
@@ -281,7 +282,7 @@ public class UserController {
 	@GetMapping("/mypage/{userSeq}/history/{historySeq}")
 	@ApiOperation(value = "히스토리 하나를 조회합니다")
 	public ResponseEntity<ResultDto<HistoryResponseDto>> getUserHistory(
-		@PathVariable("userSeq") Long userSeq, @PathVariable("historySeq") Long historySeq) throws Exception {
+		@PathVariable("userSeq") Long userSeq, @PathVariable("historySeq") Long historySeq) {
 		HistoryEntity history = userService.getUserHistory(userSeq, historySeq);
 		HistoryResponseDto historyResponseDto = HistoryResponseDto.fromEntity(history);
 		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(historyResponseDto));

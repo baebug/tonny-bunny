@@ -1,3 +1,6 @@
+server:
+  port: ${env.dev.port}
+
 # java -jar -Dspring.profiles.active=dev *.jar
 spring:
   config:
@@ -9,9 +12,6 @@ spring:
     url: ${dev.mysql.url}
     username: ${dev.mysql.username}
     password: ${dev.mysql.password}
-
-server:
-  port: ${env.dev.port}
-
-
-
+  # Jpa
+  jpa:
+    hibernate.ddl-auto: ${dev.ddl.option}
