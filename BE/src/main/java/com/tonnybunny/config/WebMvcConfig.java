@@ -29,6 +29,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 			.excludePathPatterns("/send/authcode/**") // 제외
 			.excludePathPatterns("/check/authcode/**") // 제외
 
+			//커뮤니티
+			.excludePathPatterns("/board/**") // 제외
+
 			.excludePathPatterns("/swagger-resources/**")   // swagger
 			.excludePathPatterns("/swagger-ui/**")          // swagger
 			.excludePathPatterns("/v2/**");  // swagger
