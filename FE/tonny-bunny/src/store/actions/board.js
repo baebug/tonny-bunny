@@ -1,5 +1,5 @@
 import http from "@/common/axios";
-import axios from "axios";
+import httpWithAuth from "@/common/axiosWithAuth";
 import global from "@/common/global";
 
 export default {
@@ -14,7 +14,7 @@ export default {
         this.dispatch("setIsLoading", true);
         let params = {};
         try {
-            let { data } = await http.get("/board", { params });
+            let { data } = await httpWithAuth.get("/board", { params });
             console.log("async function : ", data);
 
             data.data.forEach((d) => {
@@ -41,7 +41,7 @@ export default {
     async insertBoard(context, payload) {
         console.log("게시글을 작성합니다.");
 
-        let { data } = await http.post(`/board`, payload);
+        let { data } = await httpWithAuth.post(`/board`, payload);
 
         try {
             console.log("async function : ", data);
@@ -67,23 +67,23 @@ export default {
         }
     },
 
-    async submitFiles(context, payload) {
-        const { title, content, boardImageList } = payload;
+    // async submitFiles(context, payload) {
+    //     const { title, content, boardImageList } = payload;
 
-        console.log(payload);
-        const formData = new FormData();
-        formData.append("title", title);
-        formData.append("content", content);
+    //     console.log(payload);
+    //     const formData = new FormData();
+    //     formData.append("title", title);
+    //     formData.append("content", content);
 
-        for (let i = 0; i < boardImageList.length; i++) {
-            formData.append("files", boardImageList[i]);
-        }
+    //     for (let i = 0; i < boardImageList.length; i++) {
+    //         formData.append("files", boardImageList[i]);
+    //     }
 
-        const response = await axios.get("http://localhost:8080/api/board/img", formData, {
-            withCredentials: true,
-        });
-        console.log(response);
-    },
+    //     const response = await axios.get("http://localhost:8080/api/board/img", formData, {
+    //         withCredentials: true,
+    //     });
+    //     console.log(response);
+    // },
 
     // GET /api/board/{boardSeq} 게시글을 열람합니다.
     async getBoardDetail(context, seq) {

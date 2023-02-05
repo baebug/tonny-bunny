@@ -1,6 +1,10 @@
+import { saveAuthToCookie, getAuthFromCookie } from "@/common/utils";
+
 export default {
     isLogin: false,
     isLoginModalOpen: false,
+    token: getAuthFromCookie() || "",
+    token2: saveAuthToCookie() || "",
 
     loginInfo: {
         id: "",

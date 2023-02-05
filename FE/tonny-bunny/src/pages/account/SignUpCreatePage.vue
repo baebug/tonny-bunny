@@ -106,7 +106,7 @@
 <script>
 import TitleText from "@/components/common/TitleText.vue";
 import smallBtn from "@/components/common/button/SmallBtn.vue";
-import http from "@/common/axios";
+import { http } from "@/common/axios";
 import AlarmModal from "@/components/common/modal/AlarmModal.vue";
 
 export default {
@@ -241,6 +241,7 @@ export default {
             } catch (error) {
                 console.log(error);
             }
+            this.$store.dispatch("isNicknameOk");
         },
 
         // 휴대폰번호 입력

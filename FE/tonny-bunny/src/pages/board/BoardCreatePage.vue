@@ -1,6 +1,7 @@
 <template>
     <div class="BoardCreateConatiner">
         <div class="BoardCreateWrap">
+            {{ userInfo }}
             <title-text title="게시글 작성" />
             <form class="customForm">
                 <title-text important type="h2" title="제목" />
@@ -24,7 +25,7 @@
                     style="width: 100%"
                     text="게시글 작성"
                     color="carrot"
-                    @click="submitFiles" />
+                    @click="insertBoard" />
                 <router-link :to="{ name: 'BoardDetailPage', params: { id: 1 } }"> </router-link>
             </form>
 
@@ -45,9 +46,10 @@
 </template>
 
 <script>
-import axios from "axios";
 import TitleText from "@/components/common/TitleText.vue";
 import MediumBtn from "@/components/common/button/MediumBtn.vue";
+import { mapGetters } from "vuex";
+
 export default {
     components: { TitleText, MediumBtn },
     data() {
@@ -67,7 +69,9 @@ export default {
             boardImageList: [],
         };
     },
-
+    computed: {
+        ...mapGetters({ userInfo: "getUserInfo" }),
+    },
     methods: {
         changeInput(e) {
             // v-model 대체용
@@ -75,14 +79,15 @@ export default {
         },
 
         insertBoard() {
-            // const payload = {
-            //     title: this.title.value,
-            //     content: this.content.value,
-            //     boardImageList: this.boardImageList,
-            // };
-            // this.$store.dispatch("insertBoard", payload);
-            this.submitFiles();
+            const payload = {
+                userSeq: this.userInfo.seq,
+                title: this.title.value,
+                content: this.content.value,
+                boardImageList: this.boardImageList,
+            };
+            this.$store.dispatch("insertBoard", payload);
             // this.$store.dispatch("submitFiles", payload);
+            // this.submitFiles();
         },
 
         insertBoardImageList(e) {
@@ -93,20 +98,20 @@ export default {
             this.boardImageList.splice(index, 1);
         },
 
-        async submitFiles() {
-            const formData = new FormData();
-            formData.append("title", this.title);
-            formData.append("content", this.content);
+        // async submitFiles() {
+        //     const formData = new FormData();
+        //     formData.append("title", this.title);
+        //     formData.append("content", this.content);
 
-            for (let i = 0; i < this.boardImageList.length; i++) {
-                formData.append("files", this.boardImageList[i]);
-            }
+        //     for (let i = 0; i < this.boardImageList.length; i++) {
+        //         formData.append("files", this.boardImageList[i]);
+        //     }
 
-            const response = await axios.get("http://localhost:8080/api/board/img", formData, {
-                withCredentials: true,
-            });
-            console.log(response);
-        },
+        //     const response = await axios.get("http://localhost:8080/api/board/img", formData, {
+        //         withCredentials: true,
+        //     });
+        //     console.log(response);
+        // },
     },
 };
 </script>

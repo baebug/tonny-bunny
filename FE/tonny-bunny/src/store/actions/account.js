@@ -1,4 +1,4 @@
-import http from "@/common/axios";
+import { http } from "@/common/axios";
 // import global from "@/common/global";
 // import utils from "@/common/utils";
 
