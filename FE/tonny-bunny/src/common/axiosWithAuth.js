@@ -8,9 +8,7 @@ function createInstanceWithAuth() {
         baseURL: "http://localhost:8080/api",
 
         headers: {
-            "Content-Type": "application/json",
-            // "Access-Control-Expose-Headers": "Authorization",
-            "Allow-Control-Allow-Origin": "*",
+            // "Content-Type": "application/json",
         },
 
         withCredentials: true,

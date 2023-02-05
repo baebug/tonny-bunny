@@ -7,7 +7,7 @@ function createInstance() {
         baseURL: "http://localhost:8080/api",
 
         headers: {
-            "Content-Type": "application/json",
+            // "Content-Type": "application/json",
         },
 
         withCredentials: true,

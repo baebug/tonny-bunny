@@ -1,4 +1,5 @@
 import http from "@/common/axios";
+// import axios from "axios";
 import httpWithAuth from "@/common/axiosWithAuth";
 import global from "@/common/global";
 
@@ -14,7 +15,7 @@ export default {
         this.dispatch("setIsLoading", true);
         let params = {};
         try {
-            let { data } = await httpWithAuth.get("/board", { params });
+            let { data } = await http.get("/board", { params });
             console.log("async function : ", data);
 
             data.data.forEach((d) => {
