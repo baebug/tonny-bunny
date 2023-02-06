@@ -33,7 +33,7 @@ export default {
 
     // logout
     SET_LOG_OUT(state) {
-        state.account.userInfo = {};
+        // state.account.userInfo = {};
         state.account.isLogin = false;
     },
 };
