@@ -94,7 +94,9 @@
                                         </router-link>
                                     </li>
                                     <li>
-                                        <div @click="logout">로그아웃</div>
+                                        <router-link class="dropdown-item" to="logout">
+                                            로그아웃
+                                        </router-link>
                                     </li>
                                 </ul>
                             </div>
@@ -245,9 +247,7 @@
                                             </li>
 
                                             <li>
-                                                <a class="dropdown-item" @click="logout"
-                                                    >로그아웃</a
-                                                >
+                                                <a class="dropdown-item" href="#">로그아웃</a>
                                             </li>
                                         </ul>
                                     </li>
@@ -329,11 +329,6 @@ export default {
         clickSignUpBtn(e) {
             e.preventDefault();
             this.$router.push("/account/signup");
-        },
-
-        // logout
-        logout() {
-            this.$store.dispatch("logout");
         },
     },
 };
