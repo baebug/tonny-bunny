@@ -271,11 +271,11 @@ public class UserController {
 	 * @param userRequestDto
 	 * @return
 	 */
-	@PutMapping("/mypage/{userSeq}")
-	@ApiOperation(value = "회원정보를 수정합니다")
-	public ResponseEntity<ResultDto<Long>> modifyUserInfo(@PathVariable("userSeq") Long userSeq,
+	@PutMapping("/mypage/{userSeq}/nickName")
+	@ApiOperation(value = "닉네임을 수정합니다")
+	public ResponseEntity<ResultDto<Long>> modifyNickName(@PathVariable("userSeq") Long userSeq,
 		@RequestBody UserRequestDto userRequestDto) {
-		Long updatedUserSeq = userService.modifyUserInfo(userSeq, userRequestDto);
+		Long updatedUserSeq = userService.modifyNickName(userSeq, userRequestDto);
 		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(updatedUserSeq));
 	}
 
@@ -289,7 +289,8 @@ public class UserController {
 	 */
 	@PutMapping("/mypage/{userSeq}/profileImage")
 	@ApiOperation(value = "프로필사진을 수정합니다")
-	public ResponseEntity<ResultDto<String>> modifyProfileImage(@PathVariable("userSeq") Long userSeq, @RequestBody MultipartHttpServletRequest request) {
+	public ResponseEntity<ResultDto<String>> modifyProfileImage(@PathVariable("userSeq") Long userSeq, MultipartHttpServletRequest request) {
+		System.out.println("request = " + request.toString());
 		String profileFilePath = userService.modifyProfileImage(userSeq, request);
 		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(profileFilePath));
 	}
@@ -481,9 +482,9 @@ public class UserController {
 	@PutMapping("/mypage/{userSeq}/userCode")
 	@ApiOperation(value = "일반 고객의 유저코드를 헬퍼로 변경합니다.")
 	public ResponseEntity<ResultDto<Long>> modifyUserCode(@PathVariable("userSeq") Long userSeq) {
-		Long seq = helperInfoService.modifyUserCode(userSeq);
+		Long helperInfoSeq = helperInfoService.modifyUserCode(userSeq);
 
-		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(seq));
+		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(helperInfoSeq));
 	}
 
 

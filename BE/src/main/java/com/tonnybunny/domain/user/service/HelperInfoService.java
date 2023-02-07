@@ -499,17 +499,10 @@ public class HelperInfoService {
 		userRepository.save(user);
 
 		HelperInfoEntity helperInfo = HelperInfoEntity.builder()
-		                                              .reviewCount(0)
-		                                              .unitPrice(0)
-		                                              .user(user)
-		                                              .avgScore(0f)
-		                                              .helperInfoImageList(new ArrayList<>())
-		                                              .certificateList(new ArrayList<>())
-		                                              .possibleLanguageList(new ArrayList<>())
 		                                              .build();
 		helperInfoRepository.save(helperInfo);
 
-		return userSeq;
+		return helperInfo.getSeq();
 	}
 
 	//	/**
