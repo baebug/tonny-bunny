@@ -4,9 +4,7 @@ package com.tonnybunny.domain.user.controller;
 import com.tonnybunny.common.auth.dto.AuthResponseDto;
 import com.tonnybunny.common.dto.ResultDto;
 import com.tonnybunny.domain.user.dto.*;
-import com.tonnybunny.domain.user.entity.HelperInfoEntity;
-import com.tonnybunny.domain.user.entity.HistoryEntity;
-import com.tonnybunny.domain.user.entity.UserEntity;
+import com.tonnybunny.domain.user.entity.*;
 import com.tonnybunny.domain.user.repository.HelperInfoRepository;
 import com.tonnybunny.domain.user.repository.UserRepository;
 import com.tonnybunny.domain.user.service.EmailService;
@@ -488,16 +486,44 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(seq));
 	}
 
+
 	/**
 	 * 헬퍼의 자격증 리스트를 조회합니다.
 	 */
+	@GetMapping("/mypage/{userSeq}/helper/certificate")
+	@ApiOperation(value = "헬퍼의 자격증 정보를 조회합니다")
+	public ResponseEntity<ResultDto<List<CertificateResponseDto>>> getHelperInfoCertificate(@PathVariable("userSeq") Long userSeq) {
+		List<CertificateEntity> certificateList = helperInfoService.getCertificateList(userSeq);
+		List<CertificateResponseDto> certificateResponseList = CertificateResponseDto.fromEntityList(certificateList);
+		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(certificateResponseList));
+
+	}
+
 
 	/**
 	 * 헬퍼의 사용 언어 리스트를 조회합니다.
 	 */
+	@GetMapping("/mypage/{userSeq}/helper/possibleLang")
+	@ApiOperation(value = "헬퍼의 사용 언어 정보를 조회합니다")
+	public ResponseEntity<ResultDto<List<PossibleLanguageDto>>> getHelperInfoPossibleLang(@PathVariable("userSeq") Long userSeq) {
+		List<PossibleLanguageEntity> possibleLangList = helperInfoService.getPossibleLangList(userSeq);
+		List<PossibleLanguageDto> possibleLanguageList = PossibleLanguageDto.fromEntityList(possibleLangList);
+
+		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(possibleLanguageList));
+
+	}
+
 
 	/**
 	 * 헬퍼의 이미지 리스트를 조회합니다.
 	 */
+	@GetMapping("/mypage/{userSeq}/helper/image")
+	@ApiOperation(value = "헬퍼의 정보 이미지를 조회합니다")
+	public ResponseEntity<ResultDto<List<HelperInfoImageResponseDto>>> getHelperInfoImage(@PathVariable("userSeq") Long userSeq) {
+		List<HelperInfoImageEntity> helperInfoImageList = helperInfoService.getHelperInfoImageList(userSeq);
+		List<HelperInfoImageResponseDto> helperInfoImageResponseList = HelperInfoImageResponseDto.fromEntityList(helperInfoImageList);
+		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(helperInfoImageResponseList));
+
+	}
 
 }
