@@ -163,9 +163,6 @@ export default {
     beforeUnmount() {
         this.unsubscribe();
     },
-    created() {
-        console.log("jtonnyList: ", this.jtonnyList);
-    },
 };
 
 // import JTonnyLoading from '@/components/jtonny/JTonnyLoading.vue';
