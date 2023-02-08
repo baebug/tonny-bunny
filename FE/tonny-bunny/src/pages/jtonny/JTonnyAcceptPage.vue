@@ -98,6 +98,8 @@ export default {
             };
             jtonnyApply.unitPrice = 5000;
 
+            console.log("rotoRldi", jtonnyApply);
+
             this.stompClient.send("/pub/jtonny/apply", JSON.stringify(jtonnyApply), {});
         },
         cancel() {
@@ -116,10 +118,7 @@ export default {
 
     mounted() {
         let possibleLanguageList = this.userInfo.helperInfo.possibleLanguageList;
-        console.log("userInfo", this.userInfo);
-        console.log("helperInfo", this.userInfo.helperInfo);
-        console.log("가능언어", possibleLanguageList);
-        console.log("타입", typeof possibleLanguageList);
+        let helperSeq = this.userInfo.seq;
 
         const serverURL = "http://localhost:8080/api/stomp";
         let socket = new SockJS(serverURL);
@@ -155,6 +154,18 @@ export default {
                         }
                     );
                     this.subs.push(sub);
+                });
+
+                this.stompClient.subscribe(`/sub/jtonny/reject/${helperSeq}`, (res) => {
+                    let request = JSON.parse(res.body);
+                    console.log("reject!!", request);
+                    /* 안에 있는 seq 를 통해 공고를 찾고 삭제한다 (헬퍼는 client.seq, 고객은 helper.seq 사용) */
+                });
+
+                this.stompClient.subscribe(`/sub/jtonny/accept/${helperSeq}`, (res) => {
+                    let request = JSON.parse(res.body);
+                    console.log("accept!!!", request);
+                    /* request 안에 들어있는 uuid 를 통해 openvidu 방으로 이동 (axios) */
                 });
             },
             (error) => {

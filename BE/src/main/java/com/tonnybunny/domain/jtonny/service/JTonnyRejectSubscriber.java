@@ -29,7 +29,7 @@ public class JTonnyRejectSubscriber implements MessageListener {
 
 			log.info("jTonnyDto = {}", jTonnyDto);
 
-			// helperSeq 로 요청, "/sub/jtonny/apply/34"
+			// helperSeq 로 요청, "/sub/jtonny/reject/34"
 			String url = "/sub/jtonny/reject/" + jTonnyDto.getHelper().getSeq();
 
 			template.convertAndSend(url, jTonnyDto);

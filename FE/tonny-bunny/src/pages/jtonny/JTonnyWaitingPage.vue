@@ -198,8 +198,10 @@
                                     </div>
 
                                     <div class="d-flex btns row ms-0 me-0 ps-0 pe-0">
-                                        <div class="col-6 accept">거절</div>
-                                        <div class="col-6 reject">수락</div>
+                                        <div class="col-6 accept" @click="reject">거절</div>
+                                        <div class="col-6 reject" @click="accept(apply.helper.seq)">
+                                            수락
+                                        </div>
                                     </div>
                                 </div>
                             </transition-group>
@@ -344,8 +346,9 @@ export default {
         closeModal() {
             this.isOpen1 = false;
         },
-        accept() {
-            this.stompClient.send(`/pub/jtonny/accept`, JSON.stringify(this.jtonnyRequest), {});
+        accept(seq) {
+            let apply = this.jtonnyApplyList[seq];
+            this.stompClient.send(`/pub/jtonny/accept`, JSON.stringify(apply), {});
         },
         reject() {
             this.stompClient.send(`/pub/jtonny/reject`, JSON.stringify(this.jtonnyRequest), {});
@@ -385,6 +388,13 @@ export default {
                     console.log("이건 뭐고:", request);
                     delete this.jtonnyApplyList[request.helper.seq];
                 });
+
+                this.stompClient.subscribe(`/sub/jtonny/accept/${clientSeq}`, (res) => {
+                    let request = JSON.parse(res.body);
+                    console.log("accept!!!", request);
+                    /* request 안에 들어있는 uuid 를 통해 openvidu 방으로 이동 (axios) */
+                });
+
                 this.stompClient.send(
                     `/pub/jtonny/request`,
                     JSON.stringify(this.jtonnyRequest),

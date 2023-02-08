@@ -1,20 +1,19 @@
 package com.tonnybunny.domain.jtonny.dto;
 
 
-import com.tonnybunny.domain.user.dto.HelperInfoResponseDto;
 import com.tonnybunny.domain.user.entity.UserEntity;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 
 @Data
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class JTonnyUserDto {
 
 	private Long seq;
 	//	private String userCode;
 	private String nickName;
-	private HelperInfoResponseDto helperInfo;
+	private JTonnyHelperInfoDto helperInfo;
 
 
 	public JTonnyUserDto(UserEntity user) {
@@ -24,7 +23,7 @@ public class JTonnyUserDto {
 		//		if (this.userCode == UserCodeEnum.클라이언트.getUserCode()) {
 		//			this.helperInfo = new HelperInfoResponseDto();
 		//		} else {
-		this.helperInfo = HelperInfoResponseDto.fromEntity(user.getHelperInfo());
+		this.helperInfo = JTonnyHelperInfoDto.fromEntity(user.getHelperInfo());
 		//		}
 
 	}
