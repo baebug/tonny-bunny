@@ -1,7 +1,7 @@
 <template>
     <div class="w-100 liveContainer">
         <div id="main-container" class="container w-100">
-            <div id="join" v-if="session">
+            <!-- <div id="join" v-if="session">
                 <div id="join-dialog">
                     <h1>Join a video session</h1>
                     <p>
@@ -17,7 +17,7 @@
                         Join!
                     </button>
                 </div>
-            </div>
+            </div> -->
 
             <div id="session" v-if="!session" class="w-100">
                 <!-- 고객용 디브 -->
@@ -556,6 +556,8 @@ export default {
 }
 
 .settingBtns {
+    position: absolute;
+    z-index: 99;
     background-color: var(--background-color);
     padding: 20px;
     border-radius: 0 0 10px 10px;
