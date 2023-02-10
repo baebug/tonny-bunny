@@ -1,7 +1,7 @@
 <template>
-    <div class="w-100">
+    <div class="w-100 liveContainer">
         <div id="main-container" class="container w-100">
-            <div id="join" v-if="!session">
+            <div id="join" v-if="session">
                 <div id="join-dialog">
                     <h1>Join a video session</h1>
                     <p>
@@ -11,8 +11,7 @@
                             type="text"
                             id="sessionName"
                             v-model="sessionName"
-                            required
-                        />
+                            required />
                     </p>
                     <button class="btn btn-lg btn-success" id="join-btn" @click="joinSession()">
                         Join!
@@ -20,35 +19,55 @@
                 </div>
             </div>
 
-            <div id="session" v-if="session" class="w-100">
+            <div id="session" v-if="!session" class="w-100">
                 <!-- 고객용 디브 -->
-                <div>
-                    고객용 디브
-                    <p>
-                        ON-AIR : {{ timeToHHMMSS }} 미터기 :
-                        {{ (Math.floor(timer / 5) + 1) * unitPrice }} 캐럿
-                    </p>
-                    <h1 id="session-title"></h1>
-                    <medium-btn text="통역 시작하기" color="carrot" @click.prevent="startLive" />
-                    <medium-btn text="통역 종료하기" color="carrot" @click.prevent="endLive" />
-                    <medium-btn
-                        text="방 나가기(leave)"
-                        color="carrot"
-                        @click.prevent="leaveSession"
-                    />
-                    <medium-btn
-                        text="음소거 토글 아이콘"
-                        color="carrot"
-                        @click.prevent="muteToggle"
-                    />
-                    <medium-btn
-                        text="카메라 토글 아이콘"
-                        color="carrot"
-                        @click.prevent="cameraToggle"
-                    />
+                <div class="settingBtns">
+                    <div>
+                        <h1 id="session-title">title</h1>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-lg-6">
+                            <div>ON-AIR : {{ timeToHHMMSS }}</div>
+                            <div>미터기 : {{ (Math.floor(timer / 5) + 1) * unitPrice }} CRT</div>
+                        </div>
+                        <div class="col-12 col-lg-6">
+                            <div class="startBtn btnProps" @click.prevent="startLive">
+                                <span class="material-symbols-outlined"> play_arrow </span>
+                            </div>
+                            <div class="closeBtn btnProps" @click.prevent="endLive">
+                                <span class="material-symbols-outlined"> close </span>
+                            </div>
+                            <div class="closeBtn btnProps" @click.prevent="muteToggle">
+                                <span class="material-symbols-outlined"> mic_off </span>
+                            </div>
+                            <div class="closeBtn btnProps" @click.prevent="cameraToggle">
+                                <span class="material-symbols-outlined"> videocam_off </span>
+                            </div>
+                            <!-- <medium-btn
+								text="통역 시작하기"
+								color="carrot"
+								@click.prevent="startLive" />
+							<medium-btn
+								text="통역 종료하기"
+								color="carrot"
+								@click.prevent="endLive" />
+							<medium-btn
+								text="방 나가기(leave)"
+								color="carrot"
+								@click.prevent="leaveSession" />
+							<medium-btn
+								text="음소거 토글 아이콘"
+								color="carrot"
+								@click.prevent="muteToggle" />
+							<medium-btn
+								text="카메라 토글 아이콘"
+								color="carrot"
+								@click.prevent="cameraToggle" /> -->
+                        </div>
+                    </div>
                 </div>
                 <!-- 고객용 디브 -->
-                <div>
+                <div class="settingBtns">
                     헬퍼용 디브
                     <p>
                         ON-AIR : {{ timeToHHMMSS }} 미터기 :
@@ -57,37 +76,32 @@
                     <medium-btn
                         text="방 나가기(leave)"
                         color="carrot"
-                        @click.prevent="leaveSession"
-                    />
+                        @click.prevent="leaveSession" />
                 </div>
                 <div class="container position-relative">
                     <div
                         id="main-video"
                         class="w-100 position-absolute"
-                        style="display: inline-block"
-                    >
+                        style="display: inline-block">
                         <user-video :stream-manager="mainStreamManager" />
                     </div>
                     <div
                         id="video-container"
                         class="w-25 position-absolute"
-                        style="display: inline-block"
-                    >
+                        style="display: inline-block">
                         <div>
                             <user-video
                                 v-if="mainStreamManager != publisher"
                                 :stream-manager="publisher"
                                 style="width: 320px"
-                                @click="updateMainVideoStreamManager(publisher)"
-                            />
+                                @click="updateMainVideoStreamManager(publisher)" />
                         </div>
                         <div v-for="sub in subscribers" :key="sub.stream.connection.connectionId">
                             <user-video
                                 v-if="mainStreamManager != sub"
                                 :stream-manager="sub"
                                 style="width: 320px"
-                                @click="updateMainVideoStreamManager(sub)"
-                            />
+                                @click="updateMainVideoStreamManager(sub)" />
                         </div>
                     </div>
                 </div>
@@ -99,8 +113,7 @@
                             type="button"
                             id="buttonStartRecording"
                             @click="startRecording()"
-                            value="Start recording"
-                        />
+                            value="Start recording" />
                     </div>
                     <div class="btns">
                         <div class="vertical-separator-bottom"></div>
@@ -110,8 +123,7 @@
                             type="button"
                             id="buttonStopRecording"
                             @click="stopRecording()"
-                            value="Stop recording"
-                        />
+                            value="Stop recording" />
                     </div>
                 </div>
             </div>
@@ -192,8 +204,7 @@ export default {
             }
             return hours + ":" + minutes + ":" + seconds;
         },
-        ...mapGetters({ getStartResData: "getStartResData" }),
-        ...mapGetters({ getHistorySeq: "getHistorySeq" }),
+        ...mapGetters({ getStartResData: "getStartResData", getHistorySeq: "getHistorySeq" }),
     },
 
     methods: {
@@ -493,8 +504,16 @@ export default {
             );
 
             // 히스토리 저장 요청
+            // const payload = {
+            //     historySeq: this.getHistorySeq,
+            //     recordVideoPath: this.recordingId,
+            //     totalTime: this.timeToHHMMSS,
+            // };
+            // await this.$store.dispatch("completeLive", payload);
+            // },
+            // 히스토리 저장 요청
             const payload = {
-                historySeq: this.getHistorySeq,
+                historySeq: this.historySeq,
                 recordVideoPath: this.recordingId,
                 totalTime: this.timeToHHMMSS,
             };
@@ -517,3 +536,46 @@ export default {
     },
 };
 </script>
+
+<style lang="scss" scoped>
+.container {
+    width: 100vw !important;
+}
+.liveContainer {
+    // background-color: red;
+    // padding: 20px;
+}
+#main-container {
+    width: 100vw;
+    // padding: 20px;
+    // background-color: blue;
+}
+
+#recording-btns {
+    // background-color: green;
+}
+
+.settingBtns {
+    background-color: var(--background-color);
+    padding: 20px;
+    border-radius: 0 0 10px 10px;
+    height: 200px;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.182);
+
+    .btnProps {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+        background-color: red;
+        border-radius: 100%;
+        text-align: center;
+
+        span {
+            font-size: 4rem;
+            line-height: 80px;
+        }
+    }
+    .startBtn {
+    }
+}
+</style>
