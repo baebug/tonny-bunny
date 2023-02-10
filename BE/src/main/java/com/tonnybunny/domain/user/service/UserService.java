@@ -188,6 +188,17 @@ public class UserService {
 	}
 
 
+	public Boolean checkEmailDuplication(UserRequestDto userRequestDto) {
+
+		if (userRepository.findByEmail(userRequestDto.getEmail()).isPresent()) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+
 	public Boolean checkNickNameDuplication(UserRequestDto userRequestDto) {
 
 		if (userRepository.findByNickName(userRequestDto.getNickName()).isPresent()) {

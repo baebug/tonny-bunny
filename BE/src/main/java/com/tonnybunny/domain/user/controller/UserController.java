@@ -93,6 +93,22 @@ public class UserController {
 	}
 
 
+	@PostMapping("/signup/email")
+	@ApiOperation(value = "이메일 중복여부를 확인합니다")
+	public ResponseEntity<ResultDto<Boolean>> checkEmailDuplication(@RequestBody UserRequestDto userRequestDto) {
+		/**
+		 * service에서 반환받은 isDuplicate가 true 이면 중복된 이메일이라고 알려주기, false 면 통과
+		 *
+		 */
+		Boolean isDuplicate = userService.checkEmailDuplication(userRequestDto);
+		if (isDuplicate) {
+			return ResponseEntity.status(HttpStatus.OK).body(ResultDto.ofFail());
+		} else {
+			return ResponseEntity.status(HttpStatus.OK).body(ResultDto.ofSuccess());
+		}
+	}
+
+
 	@PostMapping("/signup/nickname")
 	@ApiOperation(value = "닉네임 중복여부를 확인합니다")
 	public ResponseEntity<ResultDto<Boolean>> checkNickNameDuplication(@RequestBody UserRequestDto userRequestDto) {
