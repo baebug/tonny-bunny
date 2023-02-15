@@ -2,6 +2,7 @@ package com.tonnybunny.domain.user.controller;
 
 
 import com.tonnybunny.common.auth.dto.AuthResponseDto;
+import com.tonnybunny.common.auth.service.AuthService;
 import com.tonnybunny.common.dto.ResultDto;
 import com.tonnybunny.domain.user.dto.*;
 import com.tonnybunny.domain.user.entity.*;
@@ -25,6 +26,7 @@ import java.util.List;
 
 import static com.tonnybunny.domain.user.dto.UserCodeEnum.클라이언트;
 import static com.tonnybunny.exception.ErrorCode.DATA_BAD_REQUEST;
+import static com.tonnybunny.exception.ErrorCode.NO_ACCESS;
 
 
 @RestController
@@ -39,6 +41,7 @@ public class UserController {
 	private final EmailService emailService;
 	private final HelperInfoRepository helperInfoRepository;
 	private final UserRepository userRepository;
+	private final AuthService authService;
 
 
 	@PostMapping("/signup")
@@ -251,7 +254,7 @@ public class UserController {
 	@PostMapping("/login/find/password/{userSeq}")
 	@ApiOperation(value = "비밀번호를 재설정 합니다.")
 	public ResponseEntity<ResultDto<Long>> resetPassword(@PathVariable("userSeq") Long userSeq,
-	                                                     @RequestBody AccountRequestDto accountRequestDto) {
+		@RequestBody AccountRequestDto accountRequestDto) {
 
 		userService.resetPassword(userSeq, accountRequestDto);
 
@@ -264,7 +267,10 @@ public class UserController {
 
 	@GetMapping("/mypage/{userSeq}")
 	@ApiOperation(value = "회원정보를 조회합니다")
-	public ResponseEntity<ResultDto<UserResponseDto>> getUserInfo(@PathVariable("userSeq") Long userSeq) {
+	public ResponseEntity<ResultDto<UserResponseDto>> getUserInfo(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
+
 		System.out.println("userSeq = " + userSeq);
 		UserEntity searchedUser = userService.getUserInfo(userSeq);
 		if (searchedUser.getUserCode().equals(클라이언트.getUserCode())) {
@@ -287,8 +293,11 @@ public class UserController {
 	 */
 	@PutMapping("/mypage/{userSeq}/nickname")
 	@ApiOperation(value = "닉네임을 수정합니다")
-	public ResponseEntity<ResultDto<Long>> modifyNickName(@PathVariable("userSeq") Long userSeq,
-	                                                      @RequestBody UserRequestDto userRequestDto) {
+	public ResponseEntity<ResultDto<Long>> modifyNickName(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq,
+		@RequestBody UserRequestDto userRequestDto) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
+
 		Long updatedUserSeq = userService.modifyNickName(userSeq, userRequestDto);
 		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(updatedUserSeq));
 	}
@@ -303,8 +312,11 @@ public class UserController {
 	 */
 	@PutMapping("/mypage/{userSeq}/profileImage")
 	@ApiOperation(value = "프로필사진을 수정합니다")
-	public ResponseEntity<ResultDto<String>> modifyProfileImage(@PathVariable("userSeq") Long userSeq,
-	                                                            MultipartHttpServletRequest request) {
+	public ResponseEntity<ResultDto<String>> modifyProfileImage(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq,
+		MultipartHttpServletRequest request) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
+
 		String profileFilePath = userService.modifyProfileImage(userSeq, request);
 		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(profileFilePath));
 	}
@@ -312,8 +324,11 @@ public class UserController {
 
 	@PutMapping("/mypage/{userSeq}/password")
 	@ApiOperation(value = "비밀번호를 수정합니다")
-	public ResponseEntity<ResultDto<Long>> modifyUserPassword(@PathVariable("userSeq") Long userSeq,
-	                                                          @RequestBody UserRequestDto userRequestDto) {
+	public ResponseEntity<ResultDto<Long>> modifyUserPassword(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq,
+		@RequestBody UserRequestDto userRequestDto) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
+
 		Long updatedUserSeq = userService.modifyUserPassword(userSeq, userRequestDto);
 		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(updatedUserSeq));
 	}
@@ -321,7 +336,10 @@ public class UserController {
 
 	@DeleteMapping("/mypage/{userSeq}")
 	@ApiOperation(value = "회원정보를 삭제합니다")
-	public ResponseEntity<ResultDto<Boolean>> deleteUserInfo(@PathVariable("userSeq") Long userSeq) {
+	public ResponseEntity<ResultDto<Boolean>> deleteUserInfo(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
+
 		userService.deleteUserInfo(userSeq);
 
 		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.ofSuccess());
@@ -336,7 +354,9 @@ public class UserController {
 	 */
 	@GetMapping("/mypage/{userSeq}/follow")
 	@ApiOperation(value = "즐겨찾기 목록을 조회합니다.")
-	public ResponseEntity<ResultDto<List<UserResponseDto>>> getFollowList(@PathVariable("userSeq") Long userSeq) {
+	public ResponseEntity<ResultDto<List<UserResponseDto>>> getFollowList(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
 
 		List<Long> followedUserList = userService.getFollowList(userSeq);
 		List<UserEntity> userEntityList = userService.getUserInfoList(followedUserList);
@@ -348,8 +368,11 @@ public class UserController {
 
 	@PostMapping("/mypage/{userSeq}/follow/{followSeq}")
 	@ApiOperation(value = "즐겨찾기 목록에 유저를 추가합니다")
-	public ResponseEntity<ResultDto<Long>> createFollow(@PathVariable("userSeq") Long userSeq,
-	                                                    @PathVariable("followSeq") Long followSeq) {
+	public ResponseEntity<ResultDto<Long>> createFollow(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq,
+		@PathVariable("followSeq") Long followSeq) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
+
 		Long followUserSeq = userService.createFollow(userSeq, followSeq);
 
 		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(followUserSeq));
@@ -359,8 +382,11 @@ public class UserController {
 
 	@DeleteMapping("/mypage/{userSeq}/follow/{followSeq}")
 	@ApiOperation(value = "즐겨찾기 목록에서 유저를 삭제합니다")
-	public ResponseEntity<ResultDto<Boolean>> deleteFollow(@PathVariable("userSeq") Long userSeq,
-	                                                       @PathVariable("followSeq") Long followSeq) {
+	public ResponseEntity<ResultDto<Boolean>> deleteFollow(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq,
+		@PathVariable("followSeq") Long followSeq) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
+
 		userService.deleteFollow(userSeq, followSeq);
 
 		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.ofSuccess());
@@ -376,7 +402,10 @@ public class UserController {
 	 */
 	@GetMapping("/mypage/{userSeq}/block")
 	@ApiOperation(value = "차단 목록을 조회합니다.")
-	public ResponseEntity<ResultDto<List<UserResponseDto>>> getBlockList(@PathVariable("userSeq") Long userSeq) {
+	public ResponseEntity<ResultDto<List<UserResponseDto>>> getBlockList(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
+
 		System.out.println("UserController.getBlockList");
 		List<Long> blockedUserList = userService.getBlockList(userSeq);
 		List<UserEntity> userEntityList = userService.getUserInfoList(blockedUserList);
@@ -388,8 +417,11 @@ public class UserController {
 
 	@PostMapping("/mypage/{userSeq}/block/{blockSeq}")
 	@ApiOperation(value = "유저를 차단합니다")
-	public ResponseEntity<ResultDto<Long>> createBlock(@PathVariable("userSeq") Long userSeq,
-	                                                   @PathVariable("blockSeq") Long blockSeq) {
+	public ResponseEntity<ResultDto<Long>> createBlock(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq,
+		@PathVariable("blockSeq") Long blockSeq) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
+
 		Long blockedUserSeq = userService.createBlock(userSeq, blockSeq);
 		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(blockedUserSeq));
 
@@ -398,8 +430,10 @@ public class UserController {
 
 	@DeleteMapping("/mypage/{userSeq}/block/{blockSeq}")
 	@ApiOperation(value = "유저 차단을 취소합니다")
-	public ResponseEntity<ResultDto<Boolean>> deleteBlock(@PathVariable("userSeq") Long userSeq,
-	                                                      @PathVariable("blockSeq") Long blockSeq) {
+	public ResponseEntity<ResultDto<Boolean>> deleteBlock(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq,
+		@PathVariable("blockSeq") Long blockSeq) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
 
 		userService.deleteBlock(userSeq, blockSeq);
 		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.ofSuccess());
@@ -411,8 +445,10 @@ public class UserController {
 
 	@PostMapping("/mypage/{userSeq}/report/{reportSeq}")
 	@ApiOperation(value = "유저를 신고합니다")
-	public ResponseEntity<ResultDto<Long>> createReport(@PathVariable("userSeq") Long userSeq,
-	                                                    @PathVariable("reportSeq") Long reportSeq) {
+	public ResponseEntity<ResultDto<Long>> createReport(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq,
+		@PathVariable("reportSeq") Long reportSeq) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
 
 		userService.createReport(userSeq, reportSeq);
 		// 신고한 유저 자동 차단
@@ -431,8 +467,11 @@ public class UserController {
 	 */
 	@GetMapping("/mypage/{userSeq}/history")
 	@ApiOperation(value = "히스토리 목록을 조회합니다", notes = "조회 필터링 조건은 하나씩만 적용됩니다. 아무 조건을 넣지 않으면 내역 전체 조회를 합니다.")
-	public ResponseEntity<ResultDto<List<HistoryResponseDto>>> getUserHistoryList(@PathVariable("userSeq") Long userSeq,
-	                                                                              @RequestBody HistoryRequestDto historyRequestDto) {
+	public ResponseEntity<ResultDto<List<HistoryResponseDto>>> getUserHistoryList(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq,
+		@RequestBody HistoryRequestDto historyRequestDto) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
+
 		List<HistoryEntity> historyList = userService.getUserHistoryList(userSeq, historyRequestDto);
 		List<HistoryResponseDto> historyResponseDtoList = HistoryResponseDto.fromEntityList(
 			historyList);
@@ -442,8 +481,11 @@ public class UserController {
 
 	@GetMapping("/mypage/{userSeq}/history/{historySeq}")
 	@ApiOperation(value = "히스토리 하나를 조회합니다")
-	public ResponseEntity<ResultDto<HistoryResponseDto>> getUserHistory(@PathVariable("userSeq") Long userSeq,
-	                                                                    @PathVariable("historySeq") Long historySeq) {
+	public ResponseEntity<ResultDto<HistoryResponseDto>> getUserHistory(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq,
+		@PathVariable("historySeq") Long historySeq) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
+
 		HistoryEntity history = userService.getUserHistory(userSeq, historySeq);
 		HistoryResponseDto historyResponseDto = HistoryResponseDto.fromEntity(history);
 		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(historyResponseDto));
@@ -454,8 +496,11 @@ public class UserController {
 
 	@PostMapping("/mypage/{userSeq}/helper")
 	@ApiOperation(value = "헬퍼의 능력 정보를 등록합니다.")
-	public ResponseEntity<ResultDto<Long>> createHelperInfo(@PathVariable("userSeq") Long userSeq,
-	                                                        @RequestBody HelperInfoRequestDto helperInfoRequestDto) {
+	public ResponseEntity<ResultDto<Long>> createHelperInfo(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq,
+		@RequestBody HelperInfoRequestDto helperInfoRequestDto) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
+
 		System.out.println("UserController.createHelperInfo");
 		HelperInfoEntity helperInfo = helperInfoService.createHelperInfo(userSeq, helperInfoRequestDto);
 
@@ -473,9 +518,11 @@ public class UserController {
 	 */
 	@PutMapping("/mypage/{userSeq}/helper")
 	@ApiOperation(value = "헬퍼의 프로필 정보를 수정합니다")
-	public ResponseEntity<ResultDto<Long>> modifyHelperInfo(@PathVariable("userSeq") Long userSeq,
-	                                                        @RequestBody HelperInfoRequestDto helperInfoRequestDto
-	) {
+	public ResponseEntity<ResultDto<Long>> modifyHelperInfo(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq,
+		@RequestBody HelperInfoRequestDto helperInfoRequestDto) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
+
 		System.out.println("UserController.modifyHelperInfo");
 		HelperInfoEntity helperInfo = helperInfoService.modifyHelperInfo(userSeq, helperInfoRequestDto);
 
@@ -513,7 +560,10 @@ public class UserController {
 	 */
 	@PutMapping("/mypage/{userSeq}/userCode")
 	@ApiOperation(value = "일반 고객의 유저코드를 헬퍼로 변경합니다.")
-	public ResponseEntity<ResultDto<Long>> modifyUserCode(@PathVariable("userSeq") Long userSeq) {
+	public ResponseEntity<ResultDto<Long>> modifyUserCode(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable("userSeq") Long userSeq) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
+
 		Long helperInfoSeq = helperInfoService.modifyUserCode(userSeq);
 
 		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.of(helperInfoSeq));

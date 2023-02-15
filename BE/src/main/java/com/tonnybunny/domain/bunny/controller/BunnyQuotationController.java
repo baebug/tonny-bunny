@@ -76,10 +76,10 @@ public class BunnyQuotationController {
 	 * @param bunnyQuotationRequestDto : 수락할 견적서 seq
 	 * @return : 로직 성공 여부
 	 */
-	@PutMapping("/{bunnySeq}/quotation/{seq}/accept")
+	@PutMapping("/{bunnySeq}/quotation/{bunnyQuotationSeq}/accept")
 	@ApiOperation(value = "번역 공고 신청에 수락하기")
 	public ResponseEntity<ResultDto<Boolean>> acceptBunnyQuotation(@RequestBody BunnyQuotationRequestDto bunnyQuotationRequestDto) {
-		
+
 		Boolean isSuccess = bunnyQuotationService.acceptBunnyQuotation(bunnyQuotationRequestDto);
 		if (isSuccess) {
 			return ResponseEntity.status(HttpStatus.OK).body(ResultDto.ofSuccess());
