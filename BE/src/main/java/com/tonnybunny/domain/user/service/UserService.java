@@ -104,58 +104,56 @@ public class UserService {
 		return user.getSeq();
 	}
 
-	// /**
-	// * @param userRequestDto
-	// * @return
-	// */
-	// @Transactional
-	// public AuthResponseDto signin(UserRequestDto userRequestDto) {
-	// UserEntity user =
-	// userRepository
-	// .findByEmail(userRequestDto.getEmail())
-	// .orElseThrow(() -> new CustomException(LOGIN_BAD_REQUEST)
-	// );
-	// AuthEntity auth =
-	// authRepository
-	// .findByUserSeq(user.getSeq())
-	// .orElseThrow(() -> new CustomException(REFRESH_TOKEN_NOT_FOUND));
-	// if (!passwordEncoder.matches(userRequestDto.getPassword(),
-	// user.getPassword())) {
-	// throw new CustomException(LOGIN_BAD_REQUEST);
-	// }
-	// String accessToken = "";
-	// String refreshToken = auth.getRefreshToken();
-	//
-	// accessToken = authService.generateJwtToken(auth.getUser());
-	// refreshToken = authService.saveRefreshToken(user);
-	// System.out.println("new refreshToken :" + refreshToken);
-	// auth.refreshUpdate(refreshToken);
-	// authRepository.save(auth);
-	//
-	// return new AuthResponseDto(accessToken, refreshToken, user.getSeq(),
-	// user.getEmail(), user.getNickName(), user.getProfileImagePath(),
-	// user.getPoint(), user.getUserCode());
-	// }
-
 
 	/**
-	 * 토큰 확인 안하는 로그인 로직
-	 *
 	 * @param userRequestDto
 	 * @return
 	 */
 	@Transactional
-	public UserEntity signin(UserRequestDto userRequestDto) {
-		UserEntity user = userRepository
-			.findByEmail(userRequestDto.getEmail())
-			.orElseThrow(() -> new CustomException(NOT_FOUND_USER));
-
-		if (!passwordEncoder.matches(userRequestDto.getPassword(), user.getPassword())) {
+	public AuthResponseDto signin(UserRequestDto userRequestDto) {
+		UserEntity user =
+			userRepository
+				.findByEmail(userRequestDto.getEmail())
+				.orElseThrow(() -> new CustomException(LOGIN_BAD_REQUEST)
+				);
+		AuthEntity auth =
+			authRepository
+				.findByUserSeq(user.getSeq())
+				.orElseThrow(() -> new CustomException(REFRESH_TOKEN_NOT_FOUND));
+		if (!passwordEncoder.matches(userRequestDto.getPassword(),
+			user.getPassword())) {
 			throw new CustomException(LOGIN_BAD_REQUEST);
 		}
+		//		String accessToken = "";
+		//		String refreshToken = auth.getRefreshToken();
 
-		return user;
+		String accessToken = authService.generateJwtToken(auth.getUser());
+		String refreshToken = authService.saveRefreshToken(user);
+		System.out.println("new refreshToken :" + refreshToken);
+		auth.refreshUpdate(refreshToken);
+		authRepository.save(auth);
+
+		return new AuthResponseDto(accessToken, refreshToken, user.getSeq());
 	}
+
+	//	/**
+	//	 * 토큰 확인 안하는 로그인 로직
+	//	 *
+	//	 * @param userRequestDto
+	//	 * @return
+	//	 */
+	//	@Transactional
+	//	public UserEntity signin(UserRequestDto userRequestDto) {
+	//		UserEntity user = userRepository
+	//			.findByEmail(userRequestDto.getEmail())
+	//			.orElseThrow(() -> new CustomException(NOT_FOUND_USER));
+	//
+	//		if (!passwordEncoder.matches(userRequestDto.getPassword(), user.getPassword())) {
+	//			throw new CustomException(LOGIN_BAD_REQUEST);
+	//		}
+	//
+	//		return user;
+	//	}
 
 
 	/**
