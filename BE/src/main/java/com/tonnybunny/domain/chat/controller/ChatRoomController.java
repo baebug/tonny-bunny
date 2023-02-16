@@ -1,6 +1,7 @@
 package com.tonnybunny.domain.chat.controller;
 
 
+import com.tonnybunny.common.auth.service.AuthService;
 import com.tonnybunny.common.dto.ResultDto;
 import com.tonnybunny.domain.chat.dto.ChatRoomDetailDto;
 import com.tonnybunny.domain.chat.dto.ChatRoomDto;
@@ -9,12 +10,15 @@ import com.tonnybunny.domain.chat.entity.ChatRoomEntity;
 import com.tonnybunny.domain.chat.service.ChatRoomService;
 import com.tonnybunny.domain.user.entity.UserEntity;
 import com.tonnybunny.domain.user.service.UserService;
+import com.tonnybunny.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.tonnybunny.exception.ErrorCode.NO_ACCESS;
 
 
 @RestController
@@ -24,6 +28,7 @@ public class ChatRoomController {
 
 	private final ChatRoomService chatRoomService;
 	private final UserService userService;
+	private final AuthService authService;
 
 
 	/**
@@ -34,7 +39,10 @@ public class ChatRoomController {
 	 * @return
 	 */
 	@PostMapping("/chat/room/{userSeq}")
-	public ResponseEntity<ResultDto<List<ChatRoomDetailDto>>> findChatRoomList(@PathVariable("userSeq") Long userSeq) {
+	public ResponseEntity<ResultDto<List<ChatRoomDetailDto>>> findChatRoomList(@PathVariable("userSeq") Long userSeq, @RequestHeader("ACCESS_TOKEN") String accessToken) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
+
 		List<ChatRoomEntity> chatRoomList = chatRoomService.getChatRoomList(userSeq);
 		List<ChatRoomDetailDto> chatRoomDetailDtoList = new ArrayList<>();
 		for (ChatRoomEntity chatRoom : chatRoomList) {
@@ -45,18 +53,18 @@ public class ChatRoomController {
 			Long anotherUserSeq = chatRoomService.getAnotherUserSeq(chatRoom, userSeq);
 			UserEntity anotherUser = userService.getUserInfo(anotherUserSeq);
 			ChatUserInfo anotherUserInfo = ChatUserInfo.builder()
-				.userSeq(anotherUserSeq)
-				.nickName(anotherUser.getNickName())
-				.profileImagePath(anotherUser.getProfileImagePath())
-				.build();
+			                                           .userSeq(anotherUserSeq)
+			                                           .nickName(anotherUser.getNickName())
+			                                           .profileImagePath(anotherUser.getProfileImagePath())
+			                                           .build();
 
 			ChatRoomDetailDto chatRoomDetailDto = ChatRoomDetailDto.builder()
-				.roomSeq(roomSeq)
-				.userSeq(userSeq)
-				.anotherUserInfo(anotherUserInfo)
-				.notReadCount(notReadCount)
-				.recentMessage(recentMesasge)
-				.build();
+			                                                       .roomSeq(roomSeq)
+			                                                       .userSeq(userSeq)
+			                                                       .anotherUserInfo(anotherUserInfo)
+			                                                       .notReadCount(notReadCount)
+			                                                       .recentMessage(recentMesasge)
+			                                                       .build();
 
 			chatRoomDetailDtoList.add(chatRoomDetailDto);
 		}
@@ -73,21 +81,25 @@ public class ChatRoomController {
 	 * @return 방 Seq, API 요청한 유저의 Seq, 상대 유저의 정보 (userSeq, nickName, profileImagePath)
 	 */
 	@PostMapping("/chat/room/{userSeq}/{anotherUserSeq}")
-	public ResponseEntity<ResultDto<ChatRoomDto>> findRoom(@PathVariable("userSeq") Long userSeq, @PathVariable("anotherUserSeq") Long anotherUserSeq) {
+	public ResponseEntity<ResultDto<ChatRoomDto>> findRoom(@PathVariable("userSeq") Long userSeq, @PathVariable("anotherUserSeq") Long anotherUserSeq,
+		@RequestHeader("ACCESS_TOKEN") String accessToken) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
+
 		ChatRoomEntity chatRoom = chatRoomService.getChatRoomSeq(userSeq, anotherUserSeq);
 
 		// 다른 참가자의 정보
 		UserEntity anotherUser = userService.getUserInfo(anotherUserSeq);
 		ChatUserInfo anotherUserInfo = ChatUserInfo.builder()
-			.userSeq(anotherUserSeq)
-			.nickName(anotherUser.getNickName())
-			.profileImagePath(anotherUser.getProfileImagePath())
-			.build();
+		                                           .userSeq(anotherUserSeq)
+		                                           .nickName(anotherUser.getNickName())
+		                                           .profileImagePath(anotherUser.getProfileImagePath())
+		                                           .build();
 		ChatRoomDto chatRoomDto = ChatRoomDetailDto.builder()
-			.roomSeq(chatRoom.getSeq())
-			.userSeq(userSeq)
-			.anotherUserInfo(anotherUserInfo)
-			.build();
+		                                           .roomSeq(chatRoom.getSeq())
+		                                           .userSeq(userSeq)
+		                                           .anotherUserInfo(anotherUserInfo)
+		                                           .build();
 		return ResponseEntity.ok(ResultDto.of(chatRoomDto));
 	}
 

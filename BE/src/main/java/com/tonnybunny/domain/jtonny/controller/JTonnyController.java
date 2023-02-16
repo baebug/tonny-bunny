@@ -38,9 +38,9 @@ public class JTonnyController {
 	public ResponseEntity<ResultDto<Boolean>> createJTonny(@RequestBody JTonnyDto jTonnyDto) {
 		/*
 			private final AuthService authService;
-			@RequestHeader("ACCESS_TOKEN") String token
-			Long tokenSeq = authService.extractAccessTokenInfo(token);
-			if (tokenSeq != seq) throw new CustomException(NO_ACCESS);
+			@RequestHeader("ACCESS_TOKEN") String accessToken
+			Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+			if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
 		*/
 		jTonnyService.createJTonny(jTonnyDto);
 		return ResponseEntity.status(HttpStatus.OK).body(ResultDto.ofSuccess());

@@ -1,6 +1,7 @@
 package com.tonnybunny.domain.alert.controller;
 
 
+import com.tonnybunny.common.auth.service.AuthService;
 import com.tonnybunny.common.dto.ResultDto;
 import com.tonnybunny.domain.alert.dto.AlertLogRequestDto;
 import com.tonnybunny.domain.alert.dto.AlertLogResponseDto;
@@ -8,6 +9,7 @@ import com.tonnybunny.domain.alert.dto.AlertSettingsDto;
 import com.tonnybunny.domain.alert.entity.AlertLogEntity;
 import com.tonnybunny.domain.alert.entity.AlertSettingsEntity;
 import com.tonnybunny.domain.alert.service.AlertService;
+import com.tonnybunny.exception.CustomException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.tonnybunny.exception.ErrorCode.NO_ACCESS;
+
 
 @RestController
 @RequestMapping("/alerts")
@@ -26,6 +30,7 @@ import java.util.List;
 public class AlertController {
 
 	private final AlertService alertService;
+	private final AuthService authService;
 	private final RedisTemplate<String, Object> redisTemplate;
 
 
@@ -74,7 +79,9 @@ public class AlertController {
 
 	@GetMapping("/settings/{userSeq}")
 	@ApiOperation(value = "알림 설정 조회 API", notes = "사용자에 따른 알림 설정 값을 반환한다.")
-	public ResponseEntity<ResultDto<AlertSettingsDto>> getAlertSettings(@PathVariable Long userSeq) {
+	public ResponseEntity<ResultDto<AlertSettingsDto>> getAlertSettings(@RequestHeader("ACCESS_TOKEN") String accessToken, @PathVariable Long userSeq) {
+		Long tokenSeq = authService.extractAccessTokenInfo(accessToken);
+		if (tokenSeq != userSeq) throw new CustomException(NO_ACCESS);
 
 		// service
 		AlertSettingsEntity alertSettings = alertService.getAlertSettings(userSeq);
