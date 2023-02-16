@@ -32,7 +32,7 @@ export default {
         state.account.userInfo = {};
         state.account.isHelper = false;
         state.account.isLogin = false;
-        state.account.ACCESS_TOKEN = "";
-        state.account.REFRESH_TOKEN = "";
+        state.account.ACCESS_TOKEN = null;
+        state.account.REFRESH_TOKEN = null;
     },
 };
