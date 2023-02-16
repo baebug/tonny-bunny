@@ -64,30 +64,30 @@ public class UserController {
 
 	}
 
-	// @PostMapping("/signin")
-	// @ApiOperation(value = "로그인 기능을 수행합니다.")
-	// public ResponseEntity<ResultDto<AuthResponseDto>> signin(@RequestBody
-	// UserRequestDto userRequestDto) {
-	// AuthResponseDto authResponseDto = userService.signin(userRequestDto);
-	//
-	// return ResponseEntity.ok().body(ResultDto.of(authResponseDto));
-	// }
 
-
-	/**
-	 * 토큰을 요구하지 않는 테스트 로그인
-	 *
-	 * @param userRequestDto
-	 * @return
-	 */
 	@PostMapping("/signin")
 	@ApiOperation(value = "로그인 기능을 수행합니다.")
-	public ResponseEntity<ResultDto<UserResponseDto>> signin(@RequestBody UserRequestDto userRequestDto) {
-		UserEntity user = userService.signin(userRequestDto);
-		UserResponseDto userResponseDto = UserResponseDto.fromEntity(user);
+	public ResponseEntity<ResultDto<AuthResponseDto>> signin(@RequestBody
+	                                                         UserRequestDto userRequestDto) {
+		AuthResponseDto authResponseDto = userService.signin(userRequestDto);
 
-		return ResponseEntity.ok().body(ResultDto.of(userResponseDto));
+		return ResponseEntity.ok().body(ResultDto.of(authResponseDto));
 	}
+
+	//	/**
+	//	 * 토큰을 요구하지 않는 테스트 로그인
+	//	 *
+	//	 * @param userRequestDto
+	//	 * @return
+	//	 */
+	//	@PostMapping("/signin")
+	//	@ApiOperation(value = "로그인 기능을 수행합니다.")
+	//	public ResponseEntity<ResultDto<UserResponseDto>> signin(@RequestBody UserRequestDto userRequestDto) {
+	//		UserEntity user = userService.signin(userRequestDto);
+	//		UserResponseDto userResponseDto = UserResponseDto.fromEntity(user);
+	//
+	//		return ResponseEntity.ok().body(ResultDto.of(userResponseDto));
+	//	}
 
 
 	/**

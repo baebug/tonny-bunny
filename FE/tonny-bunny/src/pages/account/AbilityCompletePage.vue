@@ -1,7 +1,7 @@
 <template>
     <div class="d-flex justify-content-center customFormWrap w-100">
         <div class="customForm">
-            <title-banner title="헬퍼 정보 등록 완료" text="🐰헬퍼가 되신 것을 축하합니다!" />
+            <title-banner title="헬퍼 정보 등록 완료" text="헬퍼가 되신 것을 축하합니다!" />
             <br /><br /><br />
             <div style="text-align: center">
                 <img src="@/assets/logo.png" alt="" />

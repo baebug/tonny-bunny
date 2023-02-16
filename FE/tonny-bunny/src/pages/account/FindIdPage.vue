@@ -5,7 +5,7 @@
             <div v-if="findedId == ''">
                 <title-banner
                     title="아이디 찾기"
-                    text="🐰등록하신 휴대폰 번호로 이메일 주소를 찾을 수 있습니다." />
+                    text="등록하신 휴대폰 번호로 이메일 주소를 찾을 수 있습니다." />
 
                 <!-- 휴대폰 번호 -->
                 <label for="phoneNum">휴대폰 번호</label>

@@ -21,11 +21,6 @@ public class AuthResponseDto {
 
 	// 유저 관련
 	private Long seq;
-	private String email;
-	private String nickName;
-	private String profileImagePath;
-	private Long point;
-	private String userCode;
 
 
 	public AuthResponseDto(String ACCESS_TOKEN, String REFRESH_TOKEN) {
