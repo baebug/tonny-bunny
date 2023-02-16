@@ -2,7 +2,7 @@
     <div class="d-flex justify-content-center customFormWrap w-100">
         <div class="customForm">
             <div v-if="$route.query.mypage">
-                <title-banner title="능력 어필" text="🐰당신의 능력을 어필해주세요!" />
+                <title-banner title="능력 어필" text="당신의 능력을 어필해주세요!" />
             </div>
             <div v-else>
                 <TitleText
