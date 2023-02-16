@@ -37,7 +37,7 @@
                     class="boardImageContent"
                     v-for="boardImageItem in boardDetail?.boardImageList"
                     :key="boardImageItem">
-                    <img-item width="100" :imagePath="boardItem?.boardImageItem" />
+                    <img-item width="100" :imagePath="boardItem?.boardImageItem?.imagePath" />
                 </div>
             </div>
 
@@ -48,6 +48,7 @@
                     class="input"
                     type="text"
                     :id="content.id"
+                    autocomplete="off"
                     @input="changeInput" />
                 <div class="commentCreateBtn">
                     <SmallBtn text="댓글 작성" color="primary" @click="clickCommentCreateBtn" />

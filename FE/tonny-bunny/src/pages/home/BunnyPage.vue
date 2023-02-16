@@ -2,7 +2,8 @@
     <div class="bunnyContainer container">
         <title-banner
             title="Let's Bunny !"
-            text="헬퍼에게 번역 서비스를 신청해볼까요?"></title-banner>
+            text="헬퍼에게 번역 서비스를 신청해볼까요?"
+        ></title-banner>
         <div class="bunnyWrap">
             <div class="bunnyPage row w-100">
                 <div class="col-md-2 col-12">
@@ -18,7 +19,8 @@
                                 text="번역"
                                 class="w-100 mb-10"
                                 color="carrot"
-                                font="white"></medium-btn>
+                                font="white"
+                            ></medium-btn>
                         </router-link>
                     </div>
                 </div>
@@ -35,7 +37,8 @@
                                         :startDateTime="schedule.startDateTime"
                                         :endDateTime="schedule.endDateTime"
                                         :text="schedule.content"
-                                        today></schedule-list-item>
+                                        today
+                                    ></schedule-list-item>
                                 </v-lazy>
                             </div>
                         </div>
@@ -59,29 +62,33 @@
                                 class="w-100"
                                 :dropdownArray="getLangCode"
                                 placeholder="언어"
-                                @toggle="(e) => (lang = e)" />
+                                @toggle="(e) => (lang = e)"
+                            />
                         </div>
                         <div class="col-3">
                             <DropdownInput
                                 class="w-100"
                                 :dropdownArray="getBunnySituCode"
                                 placeholder="카테고리"
-                                @toggle="(e) => (category = e)" />
+                                @toggle="(e) => (category = e)"
+                            />
                         </div>
                         <medium-btn
                             class="ms-3"
                             text="검색"
                             color="carrot"
-                            @click.prevent="search" />
+                            @click.prevent="search"
+                        />
                     </div>
                     <div class="d-flex flex-wrap col-12 customScroll" style="">
                         <div v-for="(bunny, index) in getBunnyList" :key="index" class="mt-3 w-100">
-                            <!-- {{ bunny }} -->
                             <quest-card
+                                v-if="allCode[bunny.taskStateCode] != `완료됨`"
                                 class="d-inline-block w-100 bunnyQuestCard"
                                 :questDetail="bunny"
                                 rightBtnText="신청하기"
-                                @clickBtn2="clickHelperBtn(bunny)" />
+                                @clickBtn2="clickHelperBtn(bunny)"
+                            />
                         </div>
                     </div>
                 </div>
@@ -122,6 +129,7 @@ export default {
             todayScheduleList: "getTodayScheduleList",
             userInfo: "getUserInfo",
             isHelper: "getIsHelper",
+            allCode: "getAllCode",
         }),
     },
 
@@ -161,8 +169,13 @@ export default {
                 payload.category = "";
             }
 
-            let { data } = await this.$store.dispatch("getBunnyList", payload);
-            this.getBunnyList = data;
+            this.$store.dispatch("getBunnyList", payload).then((d) => {
+                d.data.forEach((element) => {
+                    element.startDateTime = element.startDateTime.slice(0, 10);
+                    element.endDateTime = element.endDateTime.slice(0, 10);
+                });
+                this.getBunnyList = d.data;
+            });
         },
 
         async clickHelperBtn(bunny) {
