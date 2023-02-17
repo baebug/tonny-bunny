@@ -209,6 +209,9 @@
                                             <div>
                                                 <h3>카테고리</h3>
                                                 {{ allCode[apply?.tonnySituCode] }}
+                                                <!-- <square-tag
+													:text="allCode[apply?.tonnySituCode]"
+													sub></square-tag> -->
                                             </div>
                                         </div>
 
